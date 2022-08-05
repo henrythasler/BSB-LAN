@@ -13,7 +13,7 @@ if (custom_timer > (custom_timer_compare + 30000)) {    // every 20 seconds
   uint8_t txBuffer[256];
 
   snprintf((char *)txBuffer, sizeof(txBuffer), "{\"raw\": %.1f, \"value\": %.1f, \"timestamp\": " PRIi64 ", \"unit\": \"\u00b0C\"}", mean, temp, (esp_timer_get_time() / 1000000LL));
-  MQTTPubSubClient->publish("home/out/temp", txBuffer, true);
+  MQTTPubSubClient->publish("home/out/temp2", txBuffer, false);
   
 
   Serial.print(F("Absolute humidity inside: "));
