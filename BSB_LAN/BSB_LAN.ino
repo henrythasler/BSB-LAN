@@ -470,6 +470,7 @@ void loop();
 //#include "src/BSB/BSBSoftwareSerial.h"
 #include "src/BSB/bsb.h"
 #include "BSB_LAN_config.h"
+#include "BSB_LAN_secrets.h"
 #include "BSB_LAN_defs.h"
 
 #define EEPROM_SIZE 0x1000
@@ -745,7 +746,8 @@ unsigned long lastLogTime = millis();
 unsigned long lastMQTTTime = millis();
 #endif
 unsigned long custom_timer = millis();
-unsigned long custom_timer_compare = 0;
+unsigned long custom_timer_compare_500ms = 0;
+unsigned long custom_timer_compare_30s = 0;
 float custom_floats[20] = { 0 };
 long custom_longs[20] = { 0 };
 

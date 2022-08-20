@@ -31,4 +31,6 @@ BSB_LAN/scripts/lpb.sdf
 BSB_LAN/scripts/dump_enumid.pl
 BSB_LAN/scripts/filter-enumtable.pl
 BSB_LAN/scripts/check6.py
-BSB_LAN/BSB_LAN_config.h
+BSB_LAN/BSB_LAN_secrets.h
+.ipynb_checkpoints/
+.vscode/

@@ -1,20 +1,45 @@
-/* 
- * If configuration definement CUSTOM_COMMANDS is active, this code is run 
- * at the end of each main loop and utilizes the main loop variables 
+/*
+ * If configuration definement CUSTOM_COMMANDS is active, this code is run
+ * at the end of each main loop and utilizes the main loop variables
  * custom_timer (set each loop to millis()) and custom_timer_compare.
-*/
+ */
 
-if (custom_timer > (custom_timer_compare + 30000)) {    // every 20 seconds  
-  custom_timer_compare = millis();
+if (custom_timer > (custom_timer_compare_500ms + 500))
+{
+  custom_timer_compare_500ms = millis();
 
-  float mean = 32.2;
-  float temp = 42.4;
+  if (adc_data.size() >= 60)
+  {
+    adc_data.erase(adc_data.begin());
+  }
+  adc_data.push_back(float(analogRead(PIN_ADC)));  
+}
 
-  uint8_t txBuffer[256];
+if (custom_timer > (custom_timer_compare_30s + 1000 * 30))
+{ // every 10 seconds
+  custom_timer_compare_30s = millis();
 
-  snprintf((char *)txBuffer, sizeof(txBuffer), "{\"raw\": %.1f, \"value\": %.1f, \"timestamp\": " PRIi64 ", \"unit\": \"\u00b0C\"}", mean, temp, (esp_timer_get_time() / 1000000LL));
-  MQTTPubSubClient->publish("home/out/temp2", txBuffer, false);
-  
+  float mean = 0;
+  if (adc_data.size())
+  {
+    for (float &p : adc_data)
+    {
+      mean += p;
+    }
+    mean = mean / adc_data.size();
+  }
 
-  Serial.print(F("Absolute humidity inside: "));
+  float B = 3528.01, R_N = 1000, T_N = 298.15;
+  float a = 8442836, b = -2167.0;
+  float RT = a / mean + b;
+  float temp = B * T_N / (B + log(RT / R_N) * T_N) - 273.15;
+
+  if (MQTTPubSubClient != nullptr)
+  {
+    snprintf(textBuffer, sizeof(textBuffer), "{\"raw\": %.1f, \"value\": %.1f, \"timestamp\": %u, \"unit\": \"\u00b0C\"}", mean, temp, 0);
+    MQTTPubSubClient->publish(PSTR("home/out/temp"), textBuffer, true);
+
+    snprintf(textBuffer, sizeof(textBuffer), "%.1f", temp);
+    MQTTPubSubClient->publish("home/out/temp/value", textBuffer, true);
+  }
 }
