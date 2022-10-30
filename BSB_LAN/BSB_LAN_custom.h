@@ -30,7 +30,7 @@ if (custom_timer > (custom_timer_compare_30s + 1000 * 30))
   }
 
   float B = 3528.01, R_N = 1000, T_N = 298.15;
-  float a = 8633905, b = -2238.0;
+  float a = 8611895, b = -2230.0;
   float RT = a / mean + b;
   float temp = B * T_N / (B + log(RT / R_N) * T_N) - 273.15;
 
